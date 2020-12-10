@@ -87,7 +87,7 @@ SELECT * FROM ( SELECT * , ROW_NUMBER() OVER ( PARTITION BY window_start ORDER B
 
 # Stock Alerts
 
-INSERT INTO stockalerts 
+
 SELECT CAST(`symbol` as STRING) `symbol`, 
 CAST(uuid as STRING) uuid,
 `ts`,
@@ -97,14 +97,60 @@ CAST(uuid as STRING) uuid,
      `high`,
      `volume`,
      `low`,
+     `datetime`,
      'new-high' message,
      'nh' alertcode,
-     CURRENT_TIMESTAMP alerttime
+      CAST(CURRENT_TIMESTAMP AS BIGINT) alerttime
 FROM stocks st
 WHERE
     `symbol` is not null and `symbol` <> 'null' and trim(`symbol`) <> '' and 
     CAST(`close` as DOUBLE) >
     (SELECT MAX(CAST(`close` as DOUBLE)) FROM stocks s WHERE s.symbol = st.symbol);
+    
+## Insert
+
+INSERT OVERWRITE stockalerts 
+SELECT CAST(`symbol` as STRING) `symbol`, 
+CAST(uuid as STRING) uuid,
+`ts`,
+`dt`,
+     `open`,
+     `close`,
+     `high`,
+     `volume`,
+     `low`,
+     `datetime`,
+     'new-high' message,
+     'nh' alertcode,
+      CAST(CURRENT_TIMESTAMP AS BIGINT) alerttime
+FROM stocks st
+WHERE
+    `symbol` is not null and `symbol` <> 'null' and trim(`symbol`) <> '' and 
+    CAST(`close` as DOUBLE) >
+    (SELECT MAX(CAST(`close` as DOUBLE)) FROM stocks s WHERE s.symbol = st.symbol);
+    
+# Static condition works
+
+INSERT INTO stockalerts 
+/*+ OPTIONS('sink.partitioner'='round-robin') */
+SELECT CAST(`symbol` as STRING) `symbol`, 
+CAST(uuid as STRING) uuid,
+`ts`,
+`dt`,
+     `open`,
+     `close`,
+     `high`,
+     `volume`,
+     `low`,
+     `datetime`,
+     'new-high' message,
+     'nh' alertcode,
+      CAST(CURRENT_TIMESTAMP AS BIGINT) alerttime
+FROM stocks st
+WHERE
+    `symbol` is not null and `symbol` <> 'null' and trim(`symbol`) <> '' and 
+    CAST(`close` as DOUBLE) > 11
+    
     
 ## References
 
@@ -113,4 +159,4 @@ WHERE
 * https://github.com/tspannhw/ClouderaFlinkSQLForPartners/blob/main/README.md
 * https://github.com/tspannhw/ApacheConAtHome2020/tree/main/scripts
 * https://github.com/tspannhw/SmartWeather
-* 
+* https://ci.apache.org/projects/flink/flink-docs-stable/dev/table/sqlClient.html
