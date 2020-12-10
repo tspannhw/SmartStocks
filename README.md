@@ -87,7 +87,6 @@ SELECT * FROM ( SELECT * , ROW_NUMBER() OVER ( PARTITION BY window_start ORDER B
 
 # Stock Alerts
 
-
 SELECT CAST(`symbol` as STRING) `symbol`, 
 CAST(uuid as STRING) uuid,
 `ts`,
@@ -107,28 +106,7 @@ WHERE
     CAST(`close` as DOUBLE) >
     (SELECT MAX(CAST(`close` as DOUBLE)) FROM stocks s WHERE s.symbol = st.symbol);
     
-## Insert
 
-INSERT OVERWRITE stockalerts 
-SELECT CAST(`symbol` as STRING) `symbol`, 
-CAST(uuid as STRING) uuid,
-`ts`,
-`dt`,
-     `open`,
-     `close`,
-     `high`,
-     `volume`,
-     `low`,
-     `datetime`,
-     'new-high' message,
-     'nh' alertcode,
-      CAST(CURRENT_TIMESTAMP AS BIGINT) alerttime
-FROM stocks st
-WHERE
-    `symbol` is not null and `symbol` <> 'null' and trim(`symbol`) <> '' and 
-    CAST(`close` as DOUBLE) >
-    (SELECT MAX(CAST(`close` as DOUBLE)) FROM stocks s WHERE s.symbol = st.symbol);
-    
 # Static condition works
 
 INSERT INTO stockalerts 
@@ -149,9 +127,60 @@ CAST(uuid as STRING) uuid,
 FROM stocks st
 WHERE
     `symbol` is not null and `symbol` <> 'null' and trim(`symbol`) <> '' and 
-    CAST(`close` as DOUBLE) > 11
+    CAST(`close` as DOUBLE) > 11;
     
+## Alerts
+
+
+INSERT INTO stockalerts 
+/*+ OPTIONS('sink.partitioner'='round-robin') */
+SELECT CAST(`symbol` as STRING) `symbol`, 
+CAST(uuid as STRING) uuid,
+`ts`,
+`dt`,
+     `open`,
+     `close`,
+     `high`,
+     `volume`,
+     `low`,
+     `datetime`,
+     'new-high' message,
+     'nh' alertcode,
+      CAST(CURRENT_TIMESTAMP AS BIGINT) alerttime
+FROM stocks st
+WHERE
+    `symbol` is not null and `symbol` <> 'null' and trim(`symbol`) <> '' and 
+    CAST(`close` as DOUBLE) > 11;
     
+## TODO:  create table like above for stockalerts
+
+## Insert
+
+INSERT INTO stockalerts 
+/*+ OPTIONS('sink.partitioner'='round-robin') */
+
+
+SELECT CAST(`symbol` as STRING) `symbol`, 
+CAST(uuid as STRING) uuid,
+`ts`,
+`dt`,
+     `open`,
+     `close`,
+     `high`,
+     `volume`,
+     `low`,
+     `datetime`,
+     'new-high' message,
+     'nh' alertcode,
+      CAST(CURRENT_TIMESTAMP AS BIGINT) alerttime
+FROM stocks st
+WHERE
+    `symbol` is not null and `symbol` <> 'null' and trim(`symbol`) <> '' and 
+    CAST(`close` as DOUBLE) >
+    (SELECT MAX(CAST(`close` as DOUBLE)) FROM stocks s WHERE s.symbol = st.symbol);
+    
+## registry.default_database.s
+
 ## References
 
 * https://github.com/cloudera/flink-tutorials/tree/master/flink-sql-tutorial
