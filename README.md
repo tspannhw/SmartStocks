@@ -85,6 +85,27 @@ select symbol, TUMBLE_START(event_time, INTERVAL '1' MINUTE) as tumbleStart, TUM
 
 SELECT * FROM ( SELECT * , ROW_NUMBER() OVER ( PARTITION BY window_start ORDER BY num_stocks desc ) AS rownum FROM ( SELECT TUMBLE_START(event_time, INTERVAL '10' MINUTE) AS window_start, symbol, COUNT(*) AS num_stocks FROM stockEvents GROUP BY symbol, TUMBLE(event_time, INTERVAL '10' MINUTE) ) ) WHERE rownum <=3;
 
+# Stock Alerts
+
+INSERT INTO stockalerts 
+SELECT CAST(`symbol` as STRING) `symbol`, 
+CAST(uuid as STRING) uuid,
+`ts`,
+`dt`,
+     `open`,
+     `close`,
+     `high`,
+     `volume`,
+     `low`,
+     'new-high' message,
+     'nh' alertcode,
+     CURRENT_TIMESTAMP alerttime
+FROM stocks st
+WHERE
+    `symbol` is not null and `symbol` <> 'null' and trim(`symbol`) <> '' and 
+    CAST(`close` as DOUBLE) >
+    (SELECT MAX(CAST(`close` as DOUBLE)) FROM stocks s WHERE s.symbol = st.symbol);
+    
 ## References
 
 * https://github.com/cloudera/flink-tutorials/tree/master/flink-sql-tutorial
