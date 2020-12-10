@@ -20,6 +20,17 @@ flink-yarn-session -tm 2048 -s 2 -d
 
 flink-sql-client embedded -e sql-env.yaml
 
+## Run Flink SQL
+
+# Cross Catalog Query to Stocks Kafka Topic
+
+select * from registry.default_database.stocks;
+
+# Cross Catalog Query to Stocks Kudu/Impala Table
+
+select * from kudu.default_database.`impala::default.stocks`;
+
+
 ## References
 
 * https://github.com/cloudera/flink-tutorials/tree/master/flink-sql-tutorial
