@@ -14,6 +14,18 @@ FLaNK:   Smart Stocks
 
 https://github.com/tspannhw/ApacheConAtHome2020
 
+## Kafka Topic
+
+## Kafka Schema
+
+## Kudu Table
+
+## Flink Prep
+
+## Flink SQL Client Run
+
+## Flink SQL Client Configuration
+
 ## Run Flink SQL Client
 
 flink-yarn-session -tm 2048 -s 2 -d
@@ -62,7 +74,17 @@ root
  |-- low: STRING
  |-- event_time: TIMESTAMP(3) AS CAST(FROM_UNIXTIME(FLOOR(`ts` / 1000)) AS TIMESTAMP(3))
  |-- WATERMARK FOR event_time AS `event_time` - INTERVAL '5' SECOND
- 
+
+
+# Tumbling Window
+
+select symbol, TUMBLE_START(event_time, INTERVAL '1' MINUTE) as tumbleStart, TUMBLE_END(event_time, INTERVAL '1' MINUTE) as tumbleEnd, AVG(CAST(high as DOUBLE)) as avgHigh FROM stockEvents WHERE symbol is not null GROUP BY TUMBLE(event_time, INTERVAL '1' MINUTE), symbol;
+
+
+# Top 3
+
+SELECT * FROM ( SELECT * , ROW_NUMBER() OVER ( PARTITION BY window_start ORDER BY num_stocks desc ) AS rownum FROM ( SELECT TUMBLE_START(event_time, INTERVAL '10' MINUTE) AS window_start, symbol, COUNT(*) AS num_stocks FROM stockEvents GROUP BY symbol, TUMBLE(event_time, INTERVAL '10' MINUTE) ) ) WHERE rownum <=3;
+
 ## References
 
 * https://github.com/cloudera/flink-tutorials/tree/master/flink-sql-tutorial
@@ -70,3 +92,4 @@ root
 * https://github.com/tspannhw/ClouderaFlinkSQLForPartners/blob/main/README.md
 * https://github.com/tspannhw/ApacheConAtHome2020/tree/main/scripts
 * https://github.com/tspannhw/SmartWeather
+* 
