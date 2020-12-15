@@ -75,6 +75,9 @@ root
  |-- event_time: TIMESTAMP(3) AS CAST(FROM_UNIXTIME(FLOOR(`ts` / 1000)) AS TIMESTAMP(3))
  |-- WATERMARK FOR event_time AS `event_time` - INTERVAL '5' SECOND
 
+# query
+
+select * from default_catalog.default_database.stockEvents;
 
 # Tumbling Window
 
