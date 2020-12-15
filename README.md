@@ -162,6 +162,7 @@ WHERE
 INSERT INTO stockalerts 
 /*+ OPTIONS('sink.partitioner'='round-robin') */
 
+## Build alerts
 
 SELECT CAST(`symbol` as STRING) `symbol`, 
 CAST(uuid as STRING) uuid,
@@ -182,7 +183,6 @@ WHERE
     CAST(`close` as DOUBLE) >
     (SELECT MAX(CAST(`close` as DOUBLE)) FROM stocks s WHERE s.symbol = st.symbol);
     
-## registry.default_database.s
 
 ## References
 
