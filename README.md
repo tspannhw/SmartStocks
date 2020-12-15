@@ -40,7 +40,7 @@ select * from registry.default_database.stocks;
 
 # Cross Catalog Query to Stocks Kudu/Impala Table
 
-SELECT * FROM kudu.default_database.impala::default.stocks;
+select * from kudu.default_database.`impala::default.stocks`;
 
 # Default Catalog
 
