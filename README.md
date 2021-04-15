@@ -2,11 +2,24 @@
 FLaNK:   Smart Stocks
 
 
+## REST Data
+
+* https://finnhub.io/docs/api/fda-committee-meeting-calendar
+* https://iexcloud.io/docs/api/
+* https://twelvedata.com/docs#getting-started
+
+
 ## Article
 
-* https://www.datainmotion.dev/2020/11/flank-smart-weather-applications-with.html
 
+* https://dzone.com/articles/real-time-stock-processing-with-apache-nifi-and-ap
+* https://www.datainmotion.dev/2020/12/smart-stocks-with-flank-nifi-kafka.html
+* https://www.datainmotion.dev/2020/11/flank-smart-weather-applications-with.html
 * https://www.datainmotion.dev/2020/11/flank-smart-weather-websocket.html
+
+
+
+
 
 ![NiFi Ingest](https://1.bp.blogspot.com/-yWoOZkKZWCw/X5r3YQS3UAI/AAAAAAAAbzs/f16NAAkUbwQP-KIst28Tpj5J6KbOZcj6ACLcBGAsYHQ/w472-h640/weatheringest.png)
 
